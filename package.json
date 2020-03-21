@@ -1,6 +1,6 @@
 {
   "name": "vuex-electron-sync-state",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vuex plugin for synchronizing the vuex state in each electron process.",
   "main": "src/index.js",
   "scripts": {

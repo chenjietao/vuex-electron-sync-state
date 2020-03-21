@@ -1,7 +1,7 @@
 const { webContents, ipcMain, ipcRenderer, remote } = require('electron')
 
 const syncStateNotify = 'vuex-electron-sync-state-notify'
-const mainGlobalStore = 'main_global_store'
+const mainGlobalStore = 'MAIN_GLOBAL_STORE'
 const syncCurrentMutation = 'SYNC_CURRENT_MUTATION'
 
 class VuexElectronSyncState {
@@ -38,9 +38,9 @@ class VuexElectronSyncState {
           type = _type
           payload = _payload
         } else {
-          throw Error(`expects string as the type, but found ${typeof type}.`)
+          throw Error(`expects string as the type, but found ${typeof _type}.`)
         }
-        if (this._mutations[type]) {
+        if (this._mutations[type] && type !== syncCurrentMutation) {
           this.originalCommit(syncCurrentMutation, {
             type,
             payload
@@ -59,7 +59,9 @@ class VuexElectronSyncState {
   onNotify () {
     const ipcType = process.type === 'renderer' ? ipcRenderer : ipcMain
     ipcType.on(syncStateNotify, (event, { type, payload }) => {
-      this.store.originalCommit(type, payload)
+      if (typeof this.store.originalCommit === 'function') {
+        this.store.originalCommit(type, payload)
+      }
     })
   }
 
